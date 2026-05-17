@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Future Camp 운영 대시보드</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #f9fafb; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+.wrap { max-width: 1000px; margin: 0 auto; padding: 1.5rem 1rem; }
+.header { margin-bottom: 2rem; }
+.header h1 { font-size: 24px; font-weight: 700; color: #1f2937; margin-bottom: 0.5rem; }
+.header p { font-size: 14px; color: #6b7280; }
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 2rem; }
+.stat-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 1.5rem; text-align: center; }
+.stat-num { font-size: 32px; font-weight: 700; margin-bottom: 0.5rem; }
+.stat-num.blue { color: #185FA5; }
+.stat-num.green { color: #10b981; }
+.stat-num.red { color: #ef4444; }
+.stat-label { font-size: 12px; color: #6b7280; font-weight: 500; }
+.donut-section { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 1.5rem; margin-bottom: 2rem; display: grid; grid-template-columns: 200px 1fr; gap: 2rem; align-items: center; }
+.donut-wrap { position: relative; width: 150px; height: 150px; margin: 0 auto; }
+.donut-wrap svg { transform: rotate(-90deg); }
+.donut-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); text-align: center; }
+.donut-pct { font-size: 24px; font-weight: 700; color: #1f2937; }
+.donut-sub { font-size: 12px; color: #6b7280; }
+.legend { display: flex; flex-direction: column; gap: 12px; }
+.legend-item { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+.legend-dot { width: 12px; height: 12px; border-radius: 50%; }
+.filter-row { display: flex; gap: 8px; margin-bottom: 1.5rem; align-items: center; }
+.filter-row input { flex: 1; padding: 8px 12px; font-size: 13px; border: 1px solid #d1d5db; border-radius: 6px; background: #fff; }
+.filter-btn { padding: 8px 14px; font-size: 12px; border: 1px solid #d1d5db; border-radius: 6px; background: #f9fafb; color: #6b7280; cursor: pointer; white-space: nowrap; }
+.filter-btn.active { background: #185FA5; color: #fff; border-color: #185FA5; }
+.export-btn { padding: 8px 14px; font-size: 12px; font-weight: 600; border: none; border-radius: 6px; background: #185FA5; color: #fff; cursor: pointer; }
+.table-wrap { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; }
+.roster-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.roster-table th { padding: 12px; text-align: left; font-size: 11px; font-weight: 600; color: #6b7280; border-bottom: 1px solid #e5e7eb; background: #f9fafb; letter-spacing: 0.5px; }
+.roster-table td { padding: 12px; border-bottom: 1px solid #e5e7eb; color: #1f2937; }
+.roster-table tr:hover td { background: #f9fafb; }
+.pill { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 500; }
+.pill.pass { background: #d1fae5; color: #065f46; }
+.pill.fail { background: #fee2e2; color: #7f1d1d; }
+.watch-yes { color: #10b981; font-weight: 600; }
+.watch-no { color: #6b7280; }
+.empty-msg { text-align: center; padding: 3rem; font-size: 13px; color: #6b7280; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <h1>📊 Future Camp 운영 현황</h1>
+    <p>사전과제 TEST 응시 현황을 실시간으로 확인하세요</p>
+  </div>
+
+  <div class="stats">
+    <div class="stat-card"><div class="stat-num blue" id="st-total">0</div><div class="stat-label">전체 응시</div></div>
+    <div class="stat-card"><div class="stat-num green" id="st-pass">0</div><div class="stat-label">수료</div></div>
+    <div class="stat-card"><div class="stat-num red" id="st-fail">0</div><div class="stat-label">미수료</div></div>
+    <div class="stat-card"><div class="stat-num" id="st-rate">0%</div><div class="stat-label">수료율</div></div>
+  </div>
+
+  <div class="donut-section">
+    <div class="donut-wrap">
+      <svg width="150" height="150" viewBox="0 0 150 150">
+        <circle cx="75" cy="75" r="60" fill="none" stroke="#fee2e2" stroke-width="20"/>
+        <circle id="donut-pass" cx="75" cy="75" r="60" fill="none" stroke="#10b981" stroke-width="20" stroke-dasharray="0 376.99" stroke-linecap="round"/>
+      </svg>
+      <div class="donut-center"><div class="donut-pct" id="donut-pct">0%</div><div class="donut-sub">수료율</div></div>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#10b981;"></div><span id="leg-pass">수료 0명</span></div>
+      <div class="legend-item"><div class="legend-dot" style="background:#ef4444;"></div><span id="leg-fail">미수료 0명</span></div>
+      <div class="legend-item" style="margin-top:6px;"><span id="leg-avg" style="font-size:12px;color:#6b7280;">평균 정답률: —</span></div>
+      <div class="legend-item"><span id="leg-watch" style="font-size:12px;color:#6b7280;">영상 시청률: —</span></div>
+    </div>
+  </div>
+
+  <div class="filter-row">
+    <input type="text" id="search-input" placeholder="사번 또는 성명 검색..." oninput="renderRoster()" />
+    <button class="filter-btn active" id="f-all" onclick="setFilter('all')">전체</button>
+    <button class="filter-btn" id="f-pass" onclick="setFilter('pass')">수료</button>
+    <button class="filter-btn" id="f-fail" onclick="setFilter('fail')">미수료</button>
+    <button class="export-btn" onclick="exportCSV()">📥 CSV 내보내기</button>
+  </div>
+
+  <div class="table-wrap">
+    <table class="roster-table">
+      <thead>
+        <tr>
+          <th>#</th><th>사번</th><th>성명</th><th>점수</th><th>정답률</th><th>상태</th><th>영상시청</th><th>제출일시</th>
+        </tr>
+      </thead>
+      <tbody id="roster-body"></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+let currentFilter = 'all';
+
+function loadResults() { 
+  try { 
+    return JSON.parse(localStorage.getItem('fc_results')||'[]'); 
+  } catch(e){ 
+    return []; 
+  } 
+}
+
+function refreshDash() {
+  const results = loadResults();
+  const passArr = results.filter(r => r.pass);
+  const total = results.length;
+  const rate = total ? Math.round(passArr.length / total * 100) : 0;
+  const avgScore = total ? Math.round(results.reduce((s,r) => s+r.pct, 0) / total) : null;
+  const totalWatched = results.reduce((s,r) => s+(r.watchedCount||0), 0);
+  const totalWrong   = results.reduce((s,r) => s+(r.wrongCount||0), 0);
+
+  document.getElementById('st-total').textContent = total;
+  document.getElementById('st-pass').textContent = passArr.length;
+  document.getElementById('st-fail').textContent = total - passArr.length;
+  document.getElementById('st-rate').textContent = rate + '%';
+  document.getElementById('donut-pct').textContent = rate + '%';
+  document.getElementById('leg-pass').textContent = '수료 ' + passArr.length + '명';
+  document.getElementById('leg-fail').textContent = '미수료 ' + (total - passArr.length) + '명';
+  document.getElementById('leg-avg').textContent = '평균 정답률: ' + (avgScore !== null ? avgScore + '%' : '—');
+  document.getElementById('leg-watch').textContent = '영상 시청률: ' + (totalWrong ? Math.round(totalWatched/totalWrong*100)+'%' : '—');
+  
+  const circ = 376.99;
+  document.getElementById('donut-pass').setAttribute('stroke-dasharray', `${circ*rate/100} ${circ}`);
+  
+  renderRoster();
+}
+
+function setFilter(f) {
+  currentFilter = f;
+  ['all','pass','fail'].forEach(k => document.getElementById('f-'+k).classList.toggle('active', k===f));
+  renderRoster();
+}
+
+function renderRoster() {
+  const results = loadResults();
+  const q = (document.getElementById('search-input').value || '').toLowerCase();
+  const filtered = results.filter(r => {
+    const mf = currentFilter==='all' || (currentFilter==='pass'&&r.pass) || (currentFilter==='fail'&&!r.pass);
+    const mq = !q || (r.empId&&r.empId.toLowerCase().includes(q)) || (r.empName&&r.empName.toLowerCase().includes(q));
+    return mf && mq;
+  });
+  
+  const tbody = document.getElementById('roster-body');
+  if (!filtered.length) {
+    tbody.innerHTML = `<tr><td colspan="8" class="empty-msg">아직 응시 데이터가 없습니다.</td></tr>`;
+    return;
+  }
+  
+  tbody.innerHTML = filtered.map((r, i) => {
+    const wc = r.watchedCount||0, wt = r.wrongCount||0;
+    const watchTxt = wt===0 ? '오답없음' : wc===wt ? `<span class="watch-yes">✓ ${wc}/${wt}</span>` : `<span class="watch-no">${wc}/${wt}</span>`;
+    return `<tr>
+      <td>${i+1}</td>
+      <td>${r.empId}</td>
+      <td style="font-weight:500;">${r.empName}</td>
+      <td>${r.correct}/${r.total}</td>
+      <td>${r.pct}%</td>
+      <td><span class="pill ${r.pass?'pass':'fail'}">${r.pass?'수료':'미수료'}</span></td>
+      <td>${watchTxt}</td>
+      <td style="font-size:12px;color:#6b7280;">${r.date}</td>
+    </tr>`;
+  }).join('');
+}
+
+function exportCSV() {
+  const results = loadResults();
+  if (!results.length) { alert('내보낼 데이터가 없습니다.'); return; }
+  const rows = [['#','사번','성명','점수','정답률','상태','영상시청','제출일시'],
+    ...results.map((r,i) => [i+1, r.empId, r.empName, `${r.correct}/${r.total}`, r.pct+'%', r.pass?'수료':'미수료', `${r.watchedCount||0}/${r.wrongCount||0}`, r.date])];
+  const csv = rows.map(r => r.join(',')).join('\n');
+  const blob = new Blob(['\uFEFF'+csv], {type:'text/csv;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'FutureCamp_결과_' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click();
+}
+
+// 3초마다 자동 새로고침
+setInterval(refreshDash, 3000);
+refreshDash();
+</script>
+</body>
+</html>
