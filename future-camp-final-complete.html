@@ -194,6 +194,14 @@ const userAnswers = {}, watchedVideos = {};
 let submitted = false, wrongCount = 0, currentFilter = 'all';
 
 function setRole(role) {
+  if (role === 'admin') {
+    const pwd = prompt('관리자 비밀번호를 입력하세요');
+    if (pwd !== 'ODT1234') {
+      alert('비밀번호가 틀렸습니다');
+      return;
+    }
+  }
+  
   document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   
@@ -256,6 +264,19 @@ function openVideo(qId, url) {
   watchedVideos[qId] = true;
   const badge = document.getElementById('wb-' + qId);
   if (badge) badge.classList.add('show');
+  
+  // localStorage 실시간 업데이트
+  const empId = document.getElementById('emp-id').value;
+  const empName = document.getElementById('emp-name').value;
+  if (empId && empName) {
+    const arr = JSON.parse(localStorage.getItem('fc_results')||'[]');
+    const idx = arr.findIndex(r => r.empId === empId && r.empName === empName);
+    if (idx !== -1) {
+      arr[idx].watchedCount = Object.keys(watchedVideos).length;
+      localStorage.setItem('fc_results', JSON.stringify(arr));
+      refreshDash(); // Admin 페이지 실시간 업데이트
+    }
+  }
   
   if (submitted && Object.keys(watchedVideos).length === wrongCount) {
     updatePassStatus();
