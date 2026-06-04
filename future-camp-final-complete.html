@@ -33,7 +33,7 @@ body { background: #f9fafb; font-family: -apple-system, BlinkMacSystemFont, "Seg
 .options { display: flex; flex-direction: column; gap: 8px; }
 .opt-btn { display: flex; align-items: flex-start; gap: 10px; text-align: left; padding: 10px 13px; font-size: 14px; border: 1px solid #d1d5db; border-radius: 6px; background: #f9fafb; color: #1f2937; cursor: pointer; transition: all 0.15s; }
 .opt-btn:hover { background: #f3f4f6; }
-.opt-btn.selected { background: #185FA5; border-color: #0C447C; color: #fff; box-shadow: 0 4px 12px rgba(24,95,165,0.3); }
+.opt-btn.selected { background: #185FA5; border-color: #0C447C; color: #fff !important; box-shadow: 0 4px 12px rgba(24,95,165,0.3); font-weight: 600; }
 .opt-btn.selected-correct, .opt-btn.reveal-correct { background: #d1fae5; border-color: #10b981; color: #065f46; }
 .opt-btn.selected-wrong { background: #fee2e2; border-color: #dc2626; color: #7f1d1d; }
 
@@ -109,8 +109,8 @@ body { background: #f9fafb; font-family: -apple-system, BlinkMacSystemFont, "Seg
   <!-- TEST 페이지 -->
   <div class="page active" id="page-test">
     <div class="top-bar">
-      <h1>🎓 Future Camp 사전과제</h1>
-      <p>총 11문항과 의사소통 Case 작성 주관식입니다. 모든 오답 영상을 시청하면 수료입니다</p>
+      <h1>Future Camp 자가진단 TEST</h1>
+      <p>이 과정은 Future Camp 문제해결과정에 기본이 되는 내용으로 구성되었습니다.<br>총 11개의 문항을 작성하시고, 내용을 확인하고 싶은 영상이 있으시면 [▶영상보기] 버튼을 눌러주세요</p>
     </div>
     <div class="info-row">
       <input type="text" id="emp-id" placeholder="사번 (필수)" oninput="checkSubmitButton()" />
@@ -181,10 +181,10 @@ const questions = [
   { id:2, type:'mc', text:'다음 중 전체 구조를 명확히 하고 내용을 효과적으로 전달할 때 사용하는 것은?', options:['피라미드 구조','로직트리','매트릭스','프로세스'], answer:0, explanation:'피라미드 구조는 결론을 먼저 제시하고 근거를 아래에 배치하는 방식으로 효과적입니다.', videoUrl:'https://gsenc.hunet.co.kr/Edu/Imagine/Detail?goodsId=Y00134797&IsSeries=Y' },
   { id:3, type:'mc', text:'다음 중 피라미드 스트럭처에 대한 설명으로 틀린 것은?', options:['결론이나 주장의 논리적 전달이 목적이다','내용을 피라미드 형태로 구조화하여 정리할 수 있다','세부 정보부터 설명한 뒤 마지막에 결론을 제시한다','전체 흐름을 한눈에 논리적으로 파악할 수 있다'], answer:2, explanation:'피라미드 스트럭처는 결론을 먼저 제시하는 하향식(Top-down) 구조입니다.', videoUrl:'https://gsenc.hunet.co.kr/Edu/Imagine/Detail?goodsId=Y00134799&IsSeries=Y' },
   { id:4, type:'short', text:'정보를 중복과 누락 없이 분류하는 방법을 무엇이라 하는가?', answers:['mece', 'MECE'], answerDisplay:'MECE', explanation:'MECE는 항목들이 서로 중복되지 않으면서 전체를 빠짐없이 포함하는 분류 방법입니다.', videoUrl:'https://gsenc.hunet.co.kr/Edu/Imagine/Detail?goodsId=Y00134802&IsSeries=Y' },
-  { id:5, type:'mc', text:'다음 중 중복과 누락 없이 분류한 것은?', options:['카드 52장을 스페이드/하트/크로바/다이아몬드로 분류한 것','0~9의 숫자를 \'5 초과\'와 \'5 미만\'으로 분류한 것','영화 장르를 액션/스릴러/공포/코미디로 분류한 것','사람들을 남자/아저씨/여자/아줌마로 분류한 것'], answer:0, explanation:'카드 52장을 4가지 무늬로 분류하면 중복 없이 누락 없이 분류됩니다.', videoUrl:'https://gsenc.hunet.co.kr/Edu/Imagine/Detail?goodsId=Y00134803&IsSeries=Y' },
+  { id:5, type:'mc', text:'다음 중 중복과 누락 없이 분류한 것은?', options:['카드 52장을(조커제외) 스페이드/파트/클로버/다이아몬드로 분류한 것','0~9의 숫자를 \'5 초과\'와 \'5 미만\'으로 분류한 것','영화 장르를 액션/스릴러/공포/코미디로 분류한 것','사람들을 남자/아저씨/여자/아줌마로 분류한 것'], answer:0, explanation:'카드 52장을 4가지 무늬로 분류하면 중복 없이 누락 없이 분류됩니다.', videoUrl:'https://gsenc.hunet.co.kr/Edu/Imagine/Detail?goodsId=Y00134803&IsSeries=Y' },
   { id:6, type:'mc', text:'어느 범위까지 문제를 해결할지 처음에 정해두는 것을 무엇이라 하나?', options:['Scope','Issue','Gap','Logic'], answer:0, explanation:'Scope(스코프)란 문제 해결의 범위를 사전에 명확히 정해두는 것입니다.', videoUrl:'https://gsenc.hunet.co.kr/Edu/Imagine/Detail?goodsId=Y00134804&IsSeries=Y' },
   { id:7, type:'short', text:'어떤 주제나 문제를 나무 형태로 세분화해 정리하는 툴을 무엇이라 하나?', answers:['logic tree', 'logictree', '로직트리', '로직 트리'], answerDisplay:'Logic Tree', explanation:'Logic Tree(로직트리)는 문제를 나무 구조로 세분화하여 분석하는 도구입니다.', videoUrl:'https://gsenc.hunet.co.kr/Edu/Imagine/Detail?goodsId=Y00134811&IsSeries=Y' },
-  { id:8, type:'mc', text:'현재 상태와 목표 상태 간의 Gap을 무엇이라 하는가?', options:['인식','차이','문제','관계'], answer:2, explanation:'현재 상태와 목표 상태 사이의 Gap을 \'문제\'라고 정의합니다.', videoUrl:'https://gsenc.hunet.co.kr/Edu/Imagine/Detail?goodsId=Y00134808&IsSeries=Y' },
+  { id:8, type:'mc', text:'어떤 대상의 현재 수준과 바람직한 수준의 차이(Gap)를 무엇이라고 하는가?', options:['인식','변화','문제','관계'], answer:2, explanation:'현재 상태와 목표 상태 사이의 Gap을 \'문제\'라고 정의합니다.', videoUrl:'https://gsenc.hunet.co.kr/Edu/Imagine/Detail?goodsId=Y00134808&IsSeries=Y' },
   { id:9, type:'mc', text:'다음 중 로직트리의 장점이 아닌 것은?', options:['1페이지로 전체를 조망하며 생각할 수 있다','생각을 논리적이고 체계적으로 전개할 수 있다','창의적인 해결방안을 도출할 수 있다','많은 양의 정보를 글로 나열할 수 있다'], answer:3, explanation:'로직트리는 정보를 구조화하는 도구이며, 글로 나열하는 것은 장점이 아닙니다.', videoUrl:'https://gsenc.hunet.co.kr/Edu/Imagine/Detail?goodsId=Y00134812&IsSeries=Y' },
   { id:10, type:'mc', text:'다음의 로직트리 중 문제에 깊이 숨어 있는 근본 원인을 찾을 수 있는 것은?', options:['What Tree','Why Tree','How Tree','When Tree'], answer:1, explanation:'Why Tree는 "왜?"를 반복하며 근본 원인을 찾는 로직트리입니다.', videoUrl:'https://gsenc.hunet.co.kr/Edu/Imagine/Detail?goodsId=Y00134813&IsSeries=Y' },
   { id:11, type:'mc', text:'다음 중 가설 기반 검증 접근법의 특징으로 가장 거리가 먼 것은?', options:['뚜렷한 방향(가설) 설정 후 분석하라','사실에 기반한 가설을 수립하라','가장 그럴듯한 내용의 가설을 수립하라','근거가 부족하더라도 빠르게 가설을 수립해 검증하라'], answer:3, explanation:'가설 기반 접근법은 사실에 근거하여 가설을 세우는 것이 핵심입니다.', videoUrl:'https://gsenc.hunet.co.kr/Edu/Imagine/Detail?goodsId=Y00176936&IsSeries=Y' }
@@ -315,7 +315,6 @@ function updatePassStatus() {
       <div><strong>정답률</strong><br>${pct}%</div>
       <div><strong>영상시청</strong><br>${wrongCount}/${wrongCount}개</div>
       <div><strong>제출일시</strong><br>${dateStr}</div>
-      <div><strong>상태</strong><br><span style="color:#065f46;font-weight:700;">✅ 수료</span></div>
     `;
   }
 }
@@ -408,7 +407,6 @@ function submitTest() {
       <div><strong>정답률</strong><br>${pct}%</div>
       <div><strong>영상시청</strong><br>0/0개</div>
       <div><strong>제출일시</strong><br>${dateStr}</div>
-      <div><strong>상태</strong><br><span style="color:#065f46;font-weight:700;">✅ 수료</span></div>
     `;
   } else {
     showAlert('채점 완료! 📝', `점수: ${correct}/${questions.length}점\n정답률: ${pct}%\n\n❗ 틀린문제(${wrongCount}개)의 영상을 시청해주세요!\n\n영상을 모두 시청하면 수료됩니다.`);
@@ -420,7 +418,6 @@ function submitTest() {
       <div><strong>정답률</strong><br>${pct}%</div>
       <div><strong>영상시청</strong><br>${watchedCount}/${wrongCount}개</div>
       <div><strong>제출일시</strong><br>${dateStr}</div>
-      <div><strong>상태</strong><br><span style="color:#7f1d1d;font-weight:700;">❌ 미수료</span></div>
     `;
   }
   
